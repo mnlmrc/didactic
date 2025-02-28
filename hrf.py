@@ -13,9 +13,9 @@ def hrf_function(t, delay_response, delay_undershoot, dispersion_response, dispe
     return hrf
 
 
-def plot_hrf(delay_response, delay_undershoot, dispersion_response, dispersion_undershoot, ratio):
+def plot_hrf(delay_response, delay_undershoot, dispersion_response, dispersion_undershoot, ratio, kernel):
     """Plots the HRF with given parameters."""
-    t = np.linspace(0, 32, 1000)  # Time from 0 to 32s
+    t = np.linspace(0, kernel, 1000)  # Time from 0 to 32s
     hrf = hrf_function(t, delay_response, delay_undershoot, dispersion_response, dispersion_undershoot, ratio)
 
     plt.figure(figsize=(8, 4))
