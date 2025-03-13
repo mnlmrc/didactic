@@ -9,11 +9,11 @@ import argparse
 def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
 
     # load ROI mask (in this case we want to look at S1)
-    mask = nb.load(f'/cifs/diedrichsen/data/SensoriMotorPrediction/smp2/roi/subj{sn}/ROI.{H}.{roi}.nii')
+    mask = nb.load(f'/Volumes/diedrichsen_data$/data/SensoriMotorPrediction/smp2/ROI/subj{sn}/ROI.{H}.{roi}.nii')
     coords = nt.get_mask_coords(mask)
 
     # load regressor info
-    reginfo = pd.read_csv(f'/cifs/diedrichsen/data/SensoriMotorPrediction/smp2/glm12/subj{sn}/subj{sn}_reginfo.tsv', sep='\t')
+    reginfo = pd.read_csv(f'/Volumes/diedrichsen_data$/data/SensoriMotorPrediction/smp2/glm12/subj{sn}/subj{sn}_reginfo.tsv', sep='\t')
 
     # reorder reginfo for a more convenient visualization later
     reginfo['cue'] = reginfo['name'].str.extract(r'(?P<cue>\d+)%').astype(int)
@@ -47,7 +47,7 @@ def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
     for nregr in range(reginfo.shape[0]):
 
         # load nifti file
-        img = nb.load(f'/cifs/diedrichsen/data/SensoriMotorPrediction/smp2/glm12/subj{sn}/beta_{nregr+1:04d}.nii')
+        img = nb.load(f'/Volumes/diedrichsen_data$/data/SensoriMotorPrediction/smp2/glm12/subj{sn}/beta_{nregr+1:04d}.nii')
 
         # apply roi mask
         beta[nregr] = nt.sample_image(img, coords[0], coords[1], coords[2], interpolation=0)
@@ -55,13 +55,17 @@ def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
     # remove empty voxels
     beta = beta[reginfo.index][:, ~np.all(np.isnan(beta), axis=0)]
 
-    return beta, cond_vec, part_vec, cond_names
+    beta = beta[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
+    part_vec = part_vec[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
+    cond_vec = cond_vec[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
+
+    return beta, cond_vec, part_vec, cond_names[:5]
 
 
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('what', default=None)
+    parser.add_argument('what', default='make_demo_data')
     parser.add_argument('--sn', type=int, default=103)
     parser.add_argument('--H', type=str, default='L')
     parser.add_argument('--roi', type=str, default='S1')
