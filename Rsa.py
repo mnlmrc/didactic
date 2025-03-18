@@ -58,6 +58,7 @@ def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
 
     # remove empty voxels
     beta = beta[reginfo.index][:, ~np.all(np.isnan(beta), axis=0)]
+    res = res[~np.isnan(res)]
 
     beta = beta[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
     part_vec = part_vec[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
