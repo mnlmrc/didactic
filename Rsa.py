@@ -52,6 +52,10 @@ def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
         # apply roi mask
         beta[nregr] = nt.sample_image(img, coords[0], coords[1], coords[2], interpolation=0)
 
+    # load residual mean square
+    img = nb.load(f'/Volumes/diedrichsen_data$/data/SensoriMotorPrediction/smp2/glm12/subj{sn}/ResMS.nii')
+    res = nt.sample_image(img, coords[0], coords[1], coords[2], interpolation=0)
+
     # remove empty voxels
     beta = beta[reginfo.index][:, ~np.all(np.isnan(beta), axis=0)]
 
@@ -59,7 +63,7 @@ def make_demo_data_from_smp(sn=103, H='L', roi='S1'):
     part_vec = part_vec[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
     cond_vec = cond_vec[(cond_vec == 0) | (cond_vec == 1) | (cond_vec == 2) | (cond_vec == 3) | (cond_vec == 4)]
 
-    return beta, cond_vec, part_vec, cond_names[:5]
+    return beta, res, cond_vec, part_vec, cond_names[:5]
 
 
 def main():
